@@ -78,7 +78,8 @@ describe('BecoPair', () => {
     [1, 100, 100, '987158034397061298'],
     [1, 1000, 1000, '996006981039903216']
   ].map(a => a.map(n => (typeof n === 'string' ? bigNumberify(n) : expandTo18Decimals(n))))
-  swapTestCases.forEach((swapTestCase, i) => {
+   for(let i = 0; i < swapTestCases.length; i++) {
+    let swapTestCase = swapTestCases[i];
     it(`getInputPrice:${i}`, async () => {
       const [swapAmount, token0Amount, token1Amount, expectedOutputAmount] = swapTestCase
       await addLiquidity(token0Amount, token1Amount)
@@ -88,7 +89,7 @@ describe('BecoPair', () => {
       )
       await pair.swap(0, expectedOutputAmount, wallet.address, '0x', overrides)
     })
-  })
+  }
 
   const optimisticTestCases: BigNumber[][] = [
     ['997000000000000000', 5, 10, 1], // given amountIn, amountOut = floor(amountIn * .997)
@@ -96,7 +97,8 @@ describe('BecoPair', () => {
     ['997000000000000000', 5, 5, 1],
     [1, 5, 5, '1003009027081243732'] // given amountOut, amountIn = ceiling(amountOut / .997)
   ].map(a => a.map(n => (typeof n === 'string' ? bigNumberify(n) : expandTo18Decimals(n))))
-  optimisticTestCases.forEach((optimisticTestCase, i) => {
+  for(let i = 0; i < optimisticTestCases.length; i++) {
+    let optimisticTestCase = optimisticTestCases[i];
     it(`optimistic:${i}`, async () => {
       const [outputAmount, token0Amount, token1Amount, inputAmount] = optimisticTestCase
       await addLiquidity(token0Amount, token1Amount)
@@ -104,7 +106,7 @@ describe('BecoPair', () => {
       await expect(pair.swap(outputAmount.add(1), 0, wallet.address, '0x', overrides)).to.be.revertedWith('BecoSwap: K')
       await pair.swap(outputAmount, 0, wallet.address, '0x', overrides)
     })
-  })
+  }
 
   it('swap:token0', async () => {
     const token0Amount = expandTo18Decimals(5)
